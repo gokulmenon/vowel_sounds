@@ -158,13 +158,16 @@
     const label    = document.getElementById('btn-label');
 
     // ── Confetti helpers ─────────────────────────────────────
+    // Use a main-thread instance (useWorker: false) to avoid Chrome-extension
+    // interference with Worker postMessages ("Could not establish connection").
+    const myConfetti = confetti.create(null, { useWorker: false, resize: true });
     let confettiRaf = null;
 
     function stopConfetti() {
       if (confettiRaf !== null) {
         cancelAnimationFrame(confettiRaf);
         confettiRaf = null;
-        confetti.reset();
+        myConfetti.reset();
       }
     }
 
@@ -208,8 +211,8 @@
       // 🎉 Celebrate finishing the daily exercise!
       const end = Date.now() + 3000;
       function frame() {
-        confetti({ particleCount: 6, angle: 60,  spread: 55, origin: { x: 0 } });
-        confetti({ particleCount: 6, angle: 120, spread: 55, origin: { x: 1 } });
+        myConfetti({ particleCount: 6, angle: 60,  spread: 55, origin: { x: 0 } });
+        myConfetti({ particleCount: 6, angle: 120, spread: 55, origin: { x: 1 } });
         if (Date.now() < end) {
           confettiRaf = requestAnimationFrame(frame);
         } else {
