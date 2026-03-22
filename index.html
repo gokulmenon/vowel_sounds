@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vowel Sounds Practice</title>
+  <script src="res/confetti.browser.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -15,12 +16,12 @@
       font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', cursive, sans-serif;
       background: linear-gradient(135deg, #fff9c4 0%, #e1f5fe 50%, #fce4ec 100%);
       min-height: 100vh;
-      padding: 16px;
+      padding: 8px 16px 16px;
     }
 
     header {
       text-align: center;
-      padding: 24px 16px 16px;
+      padding: 8px 16px 8px;
     }
 
     header h1 {
@@ -46,14 +47,14 @@
     .audio-section {
       display: flex;
       justify-content: center;
-      margin: 20px auto;
+      gap: 12px;
+      margin: 12px auto;
     }
 
-    #play-btn {
+    .audio-btn {
       display: flex;
       align-items: center;
       gap: 12px;
-      background: linear-gradient(145deg, #43a047, #1b5e20);
       color: #fff;
       border: none;
       border-radius: 50px;
@@ -67,32 +68,32 @@
       letter-spacing: 0.5px;
     }
 
-    #play-btn:active {
+    .audio-btn:active {
       transform: scale(0.96);
       box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+
+    #play-btn {
+      background: linear-gradient(145deg, #43a047, #1b5e20);
     }
 
     #play-btn.playing {
       background: linear-gradient(145deg, #e53935, #b71c1c);
     }
 
-    #play-btn .btn-icon {
+    .audio-btn .btn-icon {
       font-size: 1.5em;
       line-height: 1;
+    }
+
+    #reset-btn {
+      background: linear-gradient(145deg, #1e88e5, #0d47a1);
     }
 
     /* ── Chart Section ─────────────────────────────────────── */
     .chart-section {
       max-width: 900px;
       margin: 0 auto 32px;
-    }
-
-    .chart-title {
-      text-align: center;
-      font-size: clamp(1.4rem, 4vw, 2rem);
-      color: #1565c0;
-      margin-bottom: 14px;
-      text-shadow: 1px 1px 0 #bbdefb;
     }
 
     .vowel-chart-img {
@@ -129,9 +130,13 @@
 
   <!-- Audio Button -->
   <div class="audio-section">
-    <button id="play-btn" aria-label="Play vowel sounds">
+    <button id="play-btn" class="audio-btn" aria-label="Play vowel sounds">
       <span class="btn-icon" id="btn-icon">▶</span>
       <span id="btn-label">Play the Sounds</span>
+    </button>
+    <button id="reset-btn" class="audio-btn" aria-label="Restart from beginning">
+      <span class="btn-icon">↺</span>
+      <span>Restart</span>
     </button>
   </div>
 
@@ -139,7 +144,6 @@
 
   <!-- Vowel Chart -->
   <section class="chart-section">
-    <h2 class="chart-title">✨ Vowels ✨</h2>
     <img class="vowel-chart-img" src="res/vowel-chart.png" alt="Vowel sounds chart with 24 vowel patterns and clipart pictures for daily practice" />
   </section>
 
@@ -147,19 +151,43 @@
 
   <script>
     // ── Audio Controls ───────────────────────────────────────
-    const audio   = document.getElementById('audio');
-    const btn     = document.getElementById('play-btn');
-    const icon    = document.getElementById('btn-icon');
-    const label   = document.getElementById('btn-label');
+    const audio    = document.getElementById('audio');
+    const btn      = document.getElementById('play-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const icon     = document.getElementById('btn-icon');
+    const label    = document.getElementById('btn-label');
 
+    // ── Confetti helpers ─────────────────────────────────────
+    let confettiRaf = null;
+
+    function stopConfetti() {
+      if (confettiRaf !== null) {
+        cancelAnimationFrame(confettiRaf);
+        confettiRaf = null;
+        confetti.reset();
+      }
+    }
+
+    // ── Button handlers ──────────────────────────────────────
     btn.addEventListener('click', () => {
       if (audio.paused) {
+        // If audio finished naturally, reset to start before replaying
+        if (audio.ended) audio.currentTime = 0;
+        stopConfetti();
         audio.play();
       } else {
         audio.pause();
       }
     });
 
+    resetBtn.addEventListener('click', () => {
+      stopConfetti();
+      audio.pause();
+      audio.currentTime = 0;
+      audio.play();
+    });
+
+    // ── Audio event listeners ────────────────────────────────
     audio.addEventListener('play', () => {
       btn.classList.add('playing');
       icon.textContent  = '⏸';
@@ -176,6 +204,19 @@
       btn.classList.remove('playing');
       icon.textContent  = '▶';
       label.textContent = 'Play the Sounds';
+
+      // 🎉 Celebrate finishing the daily exercise!
+      const end = Date.now() + 3000;
+      function frame() {
+        confetti({ particleCount: 6, angle: 60,  spread: 55, origin: { x: 0 } });
+        confetti({ particleCount: 6, angle: 120, spread: 55, origin: { x: 1 } });
+        if (Date.now() < end) {
+          confettiRaf = requestAnimationFrame(frame);
+        } else {
+          confettiRaf = null;
+        }
+      }
+      confettiRaf = requestAnimationFrame(frame);
     });
   </script>
 </body>
