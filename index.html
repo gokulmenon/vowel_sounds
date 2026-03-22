@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vowel Sounds Practice</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', cursive, sans-serif;
+      background: linear-gradient(135deg, #fff9c4 0%, #e1f5fe 50%, #fce4ec 100%);
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    header {
+      text-align: center;
+      padding: 24px 16px 16px;
+    }
+
+    header h1 {
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      color: #c2185b;
+      text-shadow: 2px 2px 0 #f8bbd0;
+      letter-spacing: 1px;
+    }
+
+    .daily-reminder {
+      display: inline-block;
+      margin-top: 10px;
+      background: #fffde7;
+      border: 3px solid #ffd600;
+      border-radius: 20px;
+      padding: 8px 20px;
+      font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+      color: #e65100;
+      font-weight: bold;
+    }
+
+    /* ── Audio Button ───────────────────────────────────────── */
+    .audio-section {
+      display: flex;
+      justify-content: center;
+      margin: 20px auto;
+    }
+
+    #play-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(145deg, #43a047, #1b5e20);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 18px 36px;
+      font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+      font-family: inherit;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+      transition: transform 0.1s, box-shadow 0.1s;
+      letter-spacing: 0.5px;
+    }
+
+    #play-btn:active {
+      transform: scale(0.96);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+
+    #play-btn.playing {
+      background: linear-gradient(145deg, #e53935, #b71c1c);
+    }
+
+    #play-btn .btn-icon {
+      font-size: 1.5em;
+      line-height: 1;
+    }
+
+    /* ── Chart Section ─────────────────────────────────────── */
+    .chart-section {
+      max-width: 900px;
+      margin: 0 auto 32px;
+    }
+
+    .chart-title {
+      text-align: center;
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      color: #1565c0;
+      margin-bottom: 14px;
+      text-shadow: 1px 1px 0 #bbdefb;
+    }
+
+    .vowel-chart-img {
+      display: block;
+      width: 100%;
+      max-width: 860px;
+      height: auto;
+      margin: 0 auto;
+      border-radius: 16px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+    }
+
+    footer {
+      text-align: center;
+      padding: 16px;
+      color: #888;
+      font-size: 0.8rem;
+    }
+
+    /* ── Responsive ────────────────────────────────────────── */
+    @media (max-width: 500px) {
+      .vowel-chart-img {
+        border-radius: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🌟 Vowel Sounds Practice 🌟</h1>
+    <div class="daily-reminder">Time to practice your vowel sounds! 🎉</div>
+  </header>
+
+  <!-- Audio Button -->
+  <div class="audio-section">
+    <button id="play-btn" aria-label="Play vowel sounds">
+      <span class="btn-icon" id="btn-icon">▶</span>
+      <span id="btn-label">Play the Sounds</span>
+    </button>
+  </div>
+
+  <audio id="audio" src="res/vowel-sounds.mp3" preload="none"></audio>
+
+  <!-- Vowel Chart -->
+  <section class="chart-section">
+    <h2 class="chart-title">✨ Vowels ✨</h2>
+    <img class="vowel-chart-img" src="res/vowel-chart.png" alt="Vowel sounds chart with 24 vowel patterns and clipart pictures for daily practice" />
+  </section>
+
+  <footer>Made with ❤️ for daily vowel sound practice</footer>
+
+  <script>
+    // ── Audio Controls ───────────────────────────────────────
+    const audio   = document.getElementById('audio');
+    const btn     = document.getElementById('play-btn');
+    const icon    = document.getElementById('btn-icon');
+    const label   = document.getElementById('btn-label');
+
+    btn.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    });
+
+    audio.addEventListener('play', () => {
+      btn.classList.add('playing');
+      icon.textContent  = '⏸';
+      label.textContent = 'Pause';
+    });
+
+    audio.addEventListener('pause', () => {
+      btn.classList.remove('playing');
+      icon.textContent  = '▶';
+      label.textContent = 'Play the Sounds';
+    });
+
+    audio.addEventListener('ended', () => {
+      btn.classList.remove('playing');
+      icon.textContent  = '▶';
+      label.textContent = 'Play the Sounds';
+    });
+  </script>
+</body>
+</html>
