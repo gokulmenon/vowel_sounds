@@ -95,64 +95,14 @@
       text-shadow: 1px 1px 0 #bbdefb;
     }
 
-    .vowel-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
-    }
-
-    .vowel-cell {
-      background: #fff;
+    .vowel-chart-img {
+      display: block;
+      width: 100%;
+      max-width: 860px;
+      height: auto;
+      margin: 0 auto;
       border-radius: 16px;
-      border: 3px solid transparent;
-      padding: 10px 6px 12px;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-      transition: transform 0.15s, box-shadow 0.15s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 110px;
-    }
-
-    .vowel-cell:hover {
-      transform: translateY(-3px) scale(1.04);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.18);
-    }
-
-    /* Row colour themes */
-    .vowel-cell.row-0 { border-color: #f48fb1; background: linear-gradient(160deg, #fff 70%, #fce4ec); }
-    .vowel-cell.row-1 { border-color: #90caf9; background: linear-gradient(160deg, #fff 70%, #e3f2fd); }
-    .vowel-cell.row-2 { border-color: #a5d6a7; background: linear-gradient(160deg, #fff 70%, #e8f5e9); }
-    .vowel-cell.row-3 { border-color: #fff176; background: linear-gradient(160deg, #fff 70%, #fffde7); }
-    .vowel-cell.row-4 { border-color: #ce93d8; background: linear-gradient(160deg, #fff 70%, #f3e5f5); }
-
-    .cell-emoji {
-      font-size: clamp(1.6rem, 4.5vw, 2.6rem);
-      line-height: 1.2;
-      margin-bottom: 4px;
-    }
-
-    .cell-sound {
-      font-size: clamp(1rem, 3vw, 1.5rem);
-      font-weight: bold;
-      color: #c62828;
-      letter-spacing: 0.5px;
-    }
-
-    .cell-word {
-      font-size: clamp(0.65rem, 1.8vw, 0.85rem);
-      color: #555;
-      margin-top: 2px;
-    }
-
-    /* empty placeholder in row 5 */
-    .vowel-cell.empty {
-      background: transparent;
-      border-color: transparent;
-      box-shadow: none;
-      pointer-events: none;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.18);
     }
 
     footer {
@@ -164,13 +114,8 @@
 
     /* ── Responsive ────────────────────────────────────────── */
     @media (max-width: 500px) {
-      .vowel-grid {
-        gap: 6px;
-      }
-      .vowel-cell {
-        min-height: 80px;
-        border-radius: 10px;
-        padding: 6px 3px 8px;
+      .vowel-chart-img {
+        border-radius: 8px;
       }
     }
   </style>
@@ -195,71 +140,12 @@
   <!-- Vowel Chart -->
   <section class="chart-section">
     <h2 class="chart-title">✨ Vowels ✨</h2>
-    <div class="vowel-grid" id="vowel-grid"></div>
+    <img class="vowel-chart-img" src="res/vowel-chart.png" alt="Vowel sounds chart with 24 vowel patterns and clipart pictures for daily practice" />
   </section>
 
   <footer>Made with ❤️ for daily vowel sound practice</footer>
 
   <script>
-    // ── Chart Data ───────────────────────────────────────────
-    const rows = [
-      [
-        { sound: 'ay', word: 'hay',   emoji: '🌾' },
-        { sound: 'ew', word: 'chew',  emoji: '😋' },
-        { sound: 'ow', word: 'mow',   emoji: '🌿' },
-        { sound: 'oy', word: 'boy',   emoji: '👦' },
-        { sound: 'aw', word: 'draw',  emoji: '✏️' },
-      ],
-      [
-        { sound: 'ar', word: 'car',   emoji: '🚗' },
-        { sound: 'ir', word: 'bird',  emoji: '🐦' },
-        { sound: 'or', word: 'fort',  emoji: '🏰' },
-        { sound: 'ur', word: 'burn',  emoji: '🔥' },
-        { sound: 'er', word: 'fern',  emoji: '🌿' },
-      ],
-      [
-        { sound: 'a_e', word: 'snake', emoji: '🐍' },
-        { sound: 'o_e', word: 'bone',  emoji: '🦴' },
-        { sound: 'i_e', word: 'kite',  emoji: '🪁' },
-        { sound: 'u_e', word: 'cube',  emoji: '🧊' },
-        { sound: 'ee',  word: 'tree',  emoji: '🌳' },
-      ],
-      [
-        { sound: 'oo', word: 'zoo',  emoji: '🦁' },
-        { sound: 'ai', word: 'rain', emoji: '🌧️' },
-        { sound: 'ea', word: 'eat',  emoji: '🍎' },
-        { sound: 'oa', word: 'boat', emoji: '⛵' },
-        { sound: 'oo', word: 'book', emoji: '📚' },
-      ],
-      [
-        { sound: 'ou', word: 'mouth', emoji: '👄' },
-        { sound: 'oi', word: 'coin',  emoji: '🪙' },
-        { sound: 'ea', word: 'bread', emoji: '🍞' },
-        { sound: 'ui', word: 'juice', emoji: '🧃' },
-        null, // empty cell
-      ],
-    ];
-
-    // ── Render Grid ──────────────────────────────────────────
-    const grid = document.getElementById('vowel-grid');
-
-    rows.forEach((row, rowIdx) => {
-      row.forEach(cell => {
-        const div = document.createElement('div');
-        if (cell === null) {
-          div.className = 'vowel-cell empty row-' + rowIdx;
-        } else {
-          div.className = 'vowel-cell row-' + rowIdx;
-          div.innerHTML =
-            '<div class="cell-emoji">' + cell.emoji + '</div>' +
-            '<div class="cell-sound">' + cell.sound + '</div>' +
-            '<div class="cell-word">' + cell.word + '</div>';
-          div.title = cell.sound + ' — ' + cell.word;
-        }
-        grid.appendChild(div);
-      });
-    });
-
     // ── Audio Controls ───────────────────────────────────────
     const audio   = document.getElementById('audio');
     const btn     = document.getElementById('play-btn');
