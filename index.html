@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vowel Sounds Practice</title>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" integrity="sha384-OLBgp1GsljhM2TJ+sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l+9Ua0vFImLlb" crossorigin="anonymous"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -157,8 +157,23 @@
     const icon     = document.getElementById('btn-icon');
     const label    = document.getElementById('btn-label');
 
+    // ── Confetti helpers ─────────────────────────────────────
+    let confettiRaf = null;
+
+    function stopConfetti() {
+      if (confettiRaf !== null) {
+        cancelAnimationFrame(confettiRaf);
+        confettiRaf = null;
+        confetti.reset();
+      }
+    }
+
+    // ── Button handlers ──────────────────────────────────────
     btn.addEventListener('click', () => {
       if (audio.paused) {
+        // If audio finished naturally, reset to start before replaying
+        if (audio.ended) audio.currentTime = 0;
+        stopConfetti();
         audio.play();
       } else {
         audio.pause();
@@ -166,11 +181,13 @@
     });
 
     resetBtn.addEventListener('click', () => {
+      stopConfetti();
       audio.pause();
       audio.currentTime = 0;
       audio.play();
     });
 
+    // ── Audio event listeners ────────────────────────────────
     audio.addEventListener('play', () => {
       btn.classList.add('playing');
       icon.textContent  = '⏸';
@@ -189,23 +206,17 @@
       label.textContent = 'Play the Sounds';
 
       // 🎉 Celebrate finishing the daily exercise!
-      const duration = 3000;
-      const end = Date.now() + duration;
-      (function frame() {
-        confetti({
-          particleCount: 6,
-          angle: 60,
-          spread: 55,
-          origin: { x: 0 }
-        });
-        confetti({
-          particleCount: 6,
-          angle: 120,
-          spread: 55,
-          origin: { x: 1 }
-        });
-        if (Date.now() < end) requestAnimationFrame(frame);
-      }());
+      const end = Date.now() + 3000;
+      function frame() {
+        confetti({ particleCount: 6, angle: 60,  spread: 55, origin: { x: 0 } });
+        confetti({ particleCount: 6, angle: 120, spread: 55, origin: { x: 1 } });
+        if (Date.now() < end) {
+          confettiRaf = requestAnimationFrame(frame);
+        } else {
+          confettiRaf = null;
+        }
+      }
+      confettiRaf = requestAnimationFrame(frame);
     });
   </script>
 </body>
