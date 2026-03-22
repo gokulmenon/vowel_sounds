@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vowel Sounds Practice</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', cursive, sans-serif;
+      background: linear-gradient(135deg, #fff9c4 0%, #e1f5fe 50%, #fce4ec 100%);
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    header {
+      text-align: center;
+      padding: 24px 16px 16px;
+    }
+
+    header h1 {
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      color: #c2185b;
+      text-shadow: 2px 2px 0 #f8bbd0;
+      letter-spacing: 1px;
+    }
+
+    .daily-reminder {
+      display: inline-block;
+      margin-top: 10px;
+      background: #fffde7;
+      border: 3px solid #ffd600;
+      border-radius: 20px;
+      padding: 8px 20px;
+      font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+      color: #e65100;
+      font-weight: bold;
+    }
+
+    /* ── Audio Button ───────────────────────────────────────── */
+    .audio-section {
+      display: flex;
+      justify-content: center;
+      margin: 20px auto;
+    }
+
+    #play-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(145deg, #43a047, #1b5e20);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 18px 36px;
+      font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+      font-family: inherit;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+      transition: transform 0.1s, box-shadow 0.1s;
+      letter-spacing: 0.5px;
+    }
+
+    #play-btn:active {
+      transform: scale(0.96);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+
+    #play-btn.playing {
+      background: linear-gradient(145deg, #e53935, #b71c1c);
+    }
+
+    #play-btn .btn-icon {
+      font-size: 1.5em;
+      line-height: 1;
+    }
+
+    /* ── Chart Section ─────────────────────────────────────── */
+    .chart-section {
+      max-width: 900px;
+      margin: 0 auto 32px;
+    }
+
+    .chart-title {
+      text-align: center;
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      color: #1565c0;
+      margin-bottom: 14px;
+      text-shadow: 1px 1px 0 #bbdefb;
+    }
+
+    .vowel-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .vowel-cell {
+      background: #fff;
+      border-radius: 16px;
+      border: 3px solid transparent;
+      padding: 10px 6px 12px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+      transition: transform 0.15s, box-shadow 0.15s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 110px;
+    }
+
+    .vowel-cell:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+    }
+
+    /* Row colour themes */
+    .vowel-cell.row-0 { border-color: #f48fb1; background: linear-gradient(160deg, #fff 70%, #fce4ec); }
+    .vowel-cell.row-1 { border-color: #90caf9; background: linear-gradient(160deg, #fff 70%, #e3f2fd); }
+    .vowel-cell.row-2 { border-color: #a5d6a7; background: linear-gradient(160deg, #fff 70%, #e8f5e9); }
+    .vowel-cell.row-3 { border-color: #fff176; background: linear-gradient(160deg, #fff 70%, #fffde7); }
+    .vowel-cell.row-4 { border-color: #ce93d8; background: linear-gradient(160deg, #fff 70%, #f3e5f5); }
+
+    .cell-emoji {
+      font-size: clamp(1.6rem, 4.5vw, 2.6rem);
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+
+    .cell-sound {
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      font-weight: bold;
+      color: #c62828;
+      letter-spacing: 0.5px;
+    }
+
+    .cell-word {
+      font-size: clamp(0.65rem, 1.8vw, 0.85rem);
+      color: #555;
+      margin-top: 2px;
+    }
+
+    /* empty placeholder in row 5 */
+    .vowel-cell.empty {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+      pointer-events: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 16px;
+      color: #888;
+      font-size: 0.8rem;
+    }
+
+    /* ── Responsive ────────────────────────────────────────── */
+    @media (max-width: 500px) {
+      .vowel-grid {
+        gap: 6px;
+      }
+      .vowel-cell {
+        min-height: 80px;
+        border-radius: 10px;
+        padding: 6px 3px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🌟 Vowel Sounds Practice 🌟</h1>
+    <div class="daily-reminder">Time to practice your vowel sounds! 🎉</div>
+  </header>
+
+  <!-- Audio Button -->
+  <div class="audio-section">
+    <button id="play-btn" aria-label="Play vowel sounds">
+      <span class="btn-icon" id="btn-icon">▶</span>
+      <span id="btn-label">Play the Sounds</span>
+    </button>
+  </div>
+
+  <audio id="audio" src="res/vowel-sounds.mp3" preload="none"></audio>
+
+  <!-- Vowel Chart -->
+  <section class="chart-section">
+    <h2 class="chart-title">✨ Vowels ✨</h2>
+    <div class="vowel-grid" id="vowel-grid"></div>
+  </section>
+
+  <footer>Made with ❤️ for daily vowel sound practice</footer>
+
+  <script>
+    // ── Chart Data ───────────────────────────────────────────
+    const rows = [
+      [
+        { sound: 'ay', word: 'hay',   emoji: '🌾' },
+        { sound: 'ew', word: 'chew',  emoji: '😋' },
+        { sound: 'ow', word: 'mow',   emoji: '🌿' },
+        { sound: 'oy', word: 'boy',   emoji: '👦' },
+        { sound: 'aw', word: 'draw',  emoji: '✏️' },
+      ],
+      [
+        { sound: 'ar', word: 'car',   emoji: '🚗' },
+        { sound: 'ir', word: 'bird',  emoji: '🐦' },
+        { sound: 'or', word: 'fort',  emoji: '🏰' },
+        { sound: 'ur', word: 'burn',  emoji: '🔥' },
+        { sound: 'er', word: 'fern',  emoji: '🌿' },
+      ],
+      [
+        { sound: 'a_e', word: 'snake', emoji: '🐍' },
+        { sound: 'o_e', word: 'bone',  emoji: '🦴' },
+        { sound: 'i_e', word: 'kite',  emoji: '🪁' },
+        { sound: 'u_e', word: 'cube',  emoji: '🧊' },
+        { sound: 'ee',  word: 'tree',  emoji: '🌳' },
+      ],
+      [
+        { sound: 'oo', word: 'zoo',  emoji: '🦁' },
+        { sound: 'ai', word: 'rain', emoji: '🌧️' },
+        { sound: 'ea', word: 'eat',  emoji: '🍎' },
+        { sound: 'oa', word: 'boat', emoji: '⛵' },
+        { sound: 'oo', word: 'book', emoji: '📚' },
+      ],
+      [
+        { sound: 'ou', word: 'mouth', emoji: '👄' },
+        { sound: 'oi', word: 'coin',  emoji: '🪙' },
+        { sound: 'ea', word: 'bread', emoji: '🍞' },
+        { sound: 'ui', word: 'juice', emoji: '🧃' },
+        null, // empty cell
+      ],
+    ];
+
+    // ── Render Grid ──────────────────────────────────────────
+    const grid = document.getElementById('vowel-grid');
+
+    rows.forEach((row, rowIdx) => {
+      row.forEach(cell => {
+        const div = document.createElement('div');
+        if (cell === null) {
+          div.className = 'vowel-cell empty row-' + rowIdx;
+        } else {
+          div.className = 'vowel-cell row-' + rowIdx;
+          div.innerHTML =
+            '<div class="cell-emoji">' + cell.emoji + '</div>' +
+            '<div class="cell-sound">' + cell.sound + '</div>' +
+            '<div class="cell-word">' + cell.word + '</div>';
+          div.title = cell.sound + ' — ' + cell.word;
+        }
+        grid.appendChild(div);
+      });
+    });
+
+    // ── Audio Controls ───────────────────────────────────────
+    const audio   = document.getElementById('audio');
+    const btn     = document.getElementById('play-btn');
+    const icon    = document.getElementById('btn-icon');
+    const label   = document.getElementById('btn-label');
+
+    btn.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    });
+
+    audio.addEventListener('play', () => {
+      btn.classList.add('playing');
+      icon.textContent  = '⏸';
+      label.textContent = 'Pause';
+    });
+
+    audio.addEventListener('pause', () => {
+      btn.classList.remove('playing');
+      icon.textContent  = '▶';
+      label.textContent = 'Play the Sounds';
+    });
+
+    audio.addEventListener('ended', () => {
+      btn.classList.remove('playing');
+      icon.textContent  = '▶';
+      label.textContent = 'Play the Sounds';
+    });
+  </script>
+</body>
+</html>
